@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% if current_user.is_anonymous %}
+    <h1>This is the cosmestics searching system!</h1>
+    {% else %}
+    <h1>Hi, {{ current_user.cname }}! Welcome to the searching system!</h1>
+    {% endif %}
+    <br>
+    <h2>Search any keywords you want!</h1>
+    <br>
+    <form class="bs-example bs-example-form" role="form" method="POST">
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="input-group">
+					<input type="text" name="keyword" class="form-control" placeholder="eg. lip stick">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="submit">
+							Go!
+						</button>
+					</span>
+				</div><!-- /input-group -->
+			</div><!-- /.col-lg-6 -->
+		</div><!-- /.row -->
+    </form>
+
+{% endblock %}

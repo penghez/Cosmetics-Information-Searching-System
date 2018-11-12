@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Cosmestic Query System</title>
+    {% endif %}
+</head>
+
+<body>
+    {% if current_user.is_anonymous %}
+    <div>Please <a href="{{ url_for('login') }}">log in</a></div>
+    {% else %}
+
+    <div> Current User: 
+        <a href="{{ url_for('profile', cname=current_user.cname) }}">{{ current_user.cname }}</a>&nbsp;
+        <a href="{{ url_for('index') }}">Bag</a>&nbsp;
+        <a href="{{ url_for('logout') }}">Log out</a>
+    </div>
+    {% endif %}
+    <hr>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}
+    {% endblock %}
+</body>
+
+</html>

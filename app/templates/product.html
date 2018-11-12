@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+    {% if product %}
+    <h1>ID: {{ product.pid }}</h1>
+    <hr>
+    <h1>Name: {{ product.pname }}</h1>
+    <hr>
+    <h1>Brand: {{ product.brands.bname }}</h1>
+    <hr>
+    <h1>Price: {{ product.price }}</h1>
+    <hr>
+    <h1>Produce date: {{ product.pdate }}</h1>
+    <hr>
+    <h1>Back to <a href = {{ url_for('index') }}>Index</a></h1>
+    {% endif %}
+{% endblock %}
