@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    {% for i in items %}
+        <h5>Item name: {{ i.pname }} Price: {{ i.price }} Amount: {{ i.amount }}</h5>
+    {% endfor %}
+    <h4>Total price: {{ sum }}</h4>
+    <hr>
+    <h4>Want to add something in your bag! Click <a href={{ url_for("index") }}>here</a>!</h5>
+{% endblock %}

@@ -3,8 +3,8 @@
 {% block app_content %}
     {% if products %}
         {% for p in products %}
-            <h1>Product: <a href = {{ url_for('product', pid=p.pid) }}>{{ p.pname }}</a> </h1>
-            <h1>Price: {{ p.price }}</h1>
+            <h4>Product: <a href = {{ url_for('product', pid=p.pid) }}>{{ p.pname }}</a> </h4>
+            <h4>Price: {{ p.price }}</h4>
             <hr>
         {% endfor %}
     {% endif %}

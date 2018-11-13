@@ -1,17 +1,30 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
+<div class="row">
     {% if product %}
-    <h1>ID: {{ product.pid }}</h1>
+    <h3>ID: {{ product.pid }}</h3>
+    <div class="col-md-4 pull-right">
+        {{ wtf.quick_form(bform) }}
+    </div>
+    <h3>Name: {{ product.pname }}</h3>
+    <h3>Brand: {{ product.bname }}</h3>
+    <h3>Category: {{ product.pricatename }} {{ product.subcatename }}</h3>
+    <h3>Price: {{ product.price }}</h3>
+    <h3>Produce date: {{ product.pdate }}</h3>
     <hr>
-    <h1>Name: {{ product.pname }}</h1>
+    <h3>Comments:</h3>
+    {% for c in comments %}
+        <h4> {{ c.content }} </h4>
+        <h5> Post by: <a href="{{ url_for('profile', cname=c.cname) }}">{{ c.cname }}</a> on {{ c.postdate }}</h5>
+    {% endfor %}
     <hr>
-    <h1>Brand: {{ product.brands.bname }}</h1>
-    <hr>
-    <h1>Price: {{ product.price }}</h1>
-    <hr>
-    <h1>Produce date: {{ product.pdate }}</h1>
-    <hr>
-    <h1>Back to <a href = {{ url_for('index') }}>Index</a></h1>
     {% endif %}
+</div>
+<div class="row">
+    <div class="col-md-4">
+        {{ wtf.quick_form(cform) }}
+    </div>
+</div>
 {% endblock %}

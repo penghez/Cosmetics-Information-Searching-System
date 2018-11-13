@@ -28,8 +28,8 @@ Cosmestic Query System
                     {% if current_user.is_anonymous %}
                     <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
-                    <li><a href="{{ url_for('profile', cname=current_user.cname) }}">Profile</a></li>
-                    <li><a href="{{ url_for('index') }}">Bag</a></li>
+                    <li><a href="{{ url_for('profile', cname=current_user.cname) }}">{{ current_user.cname }}'s profile</a></li>
+                    <li><a href="{{ url_for('bag', cid=current_user.cid) }}">Bag</a></li>
                     <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
                 </ul>
