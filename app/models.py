@@ -126,6 +126,16 @@ def add_to_bag(conn, pid, cid, amount):
     cursor.close()
 
 
+def delete_from_bag(conn, cid, pid):
+    sql_text = '''
+        DELETE 
+        FROM bags
+        WHERE cid=%s and pid=%s 
+    ''' % (cid, pid)
+    cursor = conn.execute(sql_text)
+    cursor.close()
+
+
 def get_the_bag(conn, cid):
     sql_text = '''
         SELECT *

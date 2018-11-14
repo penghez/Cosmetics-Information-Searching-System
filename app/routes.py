@@ -111,10 +111,13 @@ def product(pid):
     return render_template('product.html', title='Product', product=product, comments=comments, bform=bform, cform=cform)
 
 
-@app.route('/bag/<cid>')
+@app.route('/bag/<cid>', methods=['POST', 'GET'])
 def bag(cid):
     items = get_the_bag(g.conn, cid)
     bsum = 0
     for i in items:
         bsum += i.price * i.amount
+    if request.method == 'POST':
+        delete_from_bag(g.conn, cid, request.form['deleted'])
+        return redirect(url_for('bag', cid=cid))
     return render_template('bag.html', title='Bag', sum='%.2f'%bsum, items=items)

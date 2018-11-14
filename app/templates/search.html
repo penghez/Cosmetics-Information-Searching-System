@@ -2,10 +2,19 @@
 
 {% block app_content %}
     {% if products %}
+    <table class="table table-striped">
+        <thead>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Produce Date</th>
+        </thead>
         {% for p in products %}
-            <h4>Product: <a href = {{ url_for('product', pid=p.pid) }}>{{ p.pname }}</a> </h4>
-            <h4>Price: {{ p.price }}</h4>
-            <hr>
+            <tr>
+                <td><a href = {{ url_for('product', pid=p.pid) }}>{{ p.pname }}</td>
+                <td>{{ p.price }}</td>
+                <td>{{ p.pdate }}</td>
+            </tr>
         {% endfor %}
+    </table>
     {% endif %}
 {% endblock %}
