@@ -148,6 +148,23 @@ def get_the_bag(conn, cid):
     return fetch
 
 
+def get_sorted_result(conn, keyword, brand, cate, start_date, end_date, min_price, max_price, order):
+    sql_text = '''
+        WITH R AS (SELECT * 
+                        FROM products P, brands B, categories C
+                        WHERE P.bid = B.bid and C.cateid = P.cateid and P.pname LIKE '%%%%%s%%%%' and
+                            B.bname LIKE '%%%%%s%%%%' and C.subcatename LIKE '%%%%%s%%%%')
+        SELECT *
+        FROM R
+        WHERE R.price>=%s and R.price<=%s and R.pdate>='%s' and R.pdate<='%s'
+        ORDER BY R.%s
+    ''' % (keyword, brand, cate, min_price, max_price, start_date, end_date, order)
+    cursor = conn.execute(sql_text)
+    fetch = cursor.fetchall()
+    cursor.close()
+    return fetch
+
+
 def get_brands_cates_list(attr, table, conn=engine):
     sql_text = "SELECT %s FROM %s" % (attr, table)
     cursor = conn.execute(sql_text)

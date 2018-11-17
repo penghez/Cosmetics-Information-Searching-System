@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateField, SelectField, TextAreaField, IntegerField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length, NumberRange
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length, NumberRange, Optional
 from app.models import get_brands_cates_list, find_first_query
 from app import engine
+import datetime
 
 
 class LoginForm(FlaskForm):
@@ -46,3 +47,21 @@ class PostCommentForm(FlaskForm):
 class AddToBagForm(FlaskForm):
     amount = IntegerField('Please input amount:', validators=[NumberRange(min=1)])
     submit = SubmitField('Add to my bag')
+
+
+class FilterForm(FlaskForm):
+    start_date = DateField('Start data', format='%Y/%m/%d', validators=[Optional()])
+    end_date = DateField('End data', format='%Y/%m/%d', validators=[Optional()])
+    min_price = IntegerField('Min price', validators=[Optional()])
+    max_price = IntegerField('Max price', validators=[Optional()])
+    order = SelectField('Price order', choices=[('price DESC', 'Price High to Low'), ('price ASC', 'Price Low to High'), \
+                                                ('pdate DESC', 'Date High to Low'), ('pdate ASC', 'Date Low to High')])
+    submit = SubmitField('Apply')
+
+    def validate_maxprice(self, max_price):
+        if self.min_price.data and self.min_price.data > max_price.data:
+            raise ValidationError('Max price should not smaller than min price.')
+
+    def validate_end_date(self, end_date):
+        if self.start_date.data and self.start_date.data > end_date.data:
+            raise ValidationError('End date should not smaller than start date.')

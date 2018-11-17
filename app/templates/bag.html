@@ -19,9 +19,14 @@
                 <td><button type="submit" name="deleted" value={{ i.pid }} class="btn btn-danger">Delete</button></td>
             </tr>
           {% endfor %}
+          <tr>
+              <td>Total price</td>
+              <td>{{ sum }}</td>
+              <td></td>
+              <td></td>
+          </tr>
         </tbody>
     </table>
-    <h4>Total price: {{ sum }}</h4>
 </form>
     <hr>
     <h4>Want to add something in your bag? Click <a href={{ url_for("index") }}>here</a>!</h5>

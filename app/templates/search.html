@@ -1,20 +1,35 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    {% if products %}
-    <table class="table table-striped">
-        <thead>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Produce Date</th>
-        </thead>
-        {% for p in products %}
-            <tr>
-                <td><a href = {{ url_for('product', pid=p.pid) }}>{{ p.pname }}</td>
-                <td>{{ p.price }}</td>
-                <td>{{ p.pdate }}</td>
-            </tr>
-        {% endfor %}
+{% if products %}
+<form method="POST">
+    <table class="table">
+        {{ form.hidden_tag() }}
+        <tr>
+            <td>{{ wtf.form_field(form.start_date) }}</td>
+            <td>{{ wtf.form_field(form.end_date) }}</td>
+            <td>{{ wtf.form_field(form.min_price) }}</td>
+            <td>{{ wtf.form_field(form.max_price) }}</td>
+            <td>{{ wtf.form_field(form.order) }}</td>
+            <td  style="vertical-align: middle">{{ wtf.form_field(form.submit) }}</td>
+        </tr>
     </table>
-    {% endif %}
+</form>
+
+<table class="table table-hover table-striped">
+    <thead>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Produce Date</th>
+    </thead>
+    {% for p in products %}
+    <tr>
+        <td><a href={{ url_for('product', pid=p.pid) }}>{{ p.pname }}</td>
+        <td>{{ p.price }}</td>
+        <td>{{ p.pdate }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
 {% endblock %}

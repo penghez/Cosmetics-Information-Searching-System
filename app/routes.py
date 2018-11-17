@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request, g
 from app import app, engine
-from app.forms import LoginForm, RegistrationForm, SearchForm, PostCommentForm, AddToBagForm
+from app.forms import *
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import *
 from config import Config
@@ -31,7 +31,7 @@ def index():
     if form.validate_on_submit():
         keyword, brand, cate = form.keyword.data, form.brand.data, form.category.data
         keyword_list = keyword + "#" + brand + "#" + cate.split('/')[0]
-        return redirect(url_for('search', keyword=keyword_list))
+        return redirect(url_for('search', keywords=keyword_list))
 
     return render_template('index.html', title='Home', form=form)
 
@@ -72,14 +72,30 @@ def profile(cname):
     return render_template('profile.html', title='Profile', user=user)
 
 
-@app.route('/search/<keyword>')
-def search(keyword):
-    keyword, brand, cate = keyword.split('#')
+@app.route('/search/<keywords>', methods=['POST', 'GET'])
+def search(keywords):
+    form = FilterForm()
+    keyword, brand, cate = keywords.split('#')
     products = search_by_keywords(g.conn, keyword, brand, cate)
     if not products:
         flash("Can not find such product in the database.")
         return redirect(url_for('index'))
-    return render_template('search.html', title='Search', products=products)
+
+    if form.validate_on_submit():
+        start_date, end_date = form.start_date.data, form.end_date.data
+        min_price, max_price = form.min_price.data, form.max_price.data
+        order = form.order.data
+        if not start_date:
+            start_date = datetime.datetime.strptime('1000/01/01', '%Y/%m/%d') 
+        if not end_date:
+            end_date = datetime.date.today()
+        if not min_price:
+            min_price = 0
+        if not max_price:
+            max_price = 99999
+        products = get_sorted_result(g.conn, keyword, brand, cate, start_date, end_date, min_price, max_price, order)
+        return render_template('search.html', title='Search', products=products, form=form)
+    return render_template('search.html', title='Search', products=products, form=form)
 
 
 @app.route('/product/<pid>', methods=['POST', 'GET'])
@@ -119,5 +135,6 @@ def bag(cid):
         bsum += i.price * i.amount
     if request.method == 'POST':
         delete_from_bag(g.conn, cid, request.form['deleted'])
+        flash("You have removed the item no.%s from your bag." % cid)
         return redirect(url_for('bag', cid=cid))
     return render_template('bag.html', title='Bag', sum='%.2f'%bsum, items=items)
