@@ -2,29 +2,44 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-<div class="row">
-    {% if product %}
-    <h3>ID: {{ product.pid }}</h3>
-    <div class="col-md-4 pull-right">
-        {{ wtf.quick_form(bform) }}
-    </div>
-    <h3>Name: {{ product.pname }}</h3>
-    <h3>Brand: {{ product.bname }}</h3>
-    <h3>Category: {{ product.pricatename }} {{ product.subcatename }}</h3>
-    <h3>Price: {{ product.price }}</h3>
-    <h3>Produce date: {{ product.pdate }}</h3>
-    <hr>
-    <h3>Comments:</h3>
-    {% for c in comments %}
-        <h4> {{ c.content }} </h4>
-        <h5> Post by: <a href="{{ url_for('profile', cname=c.cname) }}">{{ c.cname }}</a> on {{ c.postdate }}</h5>
-    {% endfor %}
-    <hr>
-    {% endif %}
+
+<h3>Product information:</h3>
+{% if product %}
+<table class="table table-bordered h3">
+    <tr>
+        <td>ID</td>
+        <td>{{ product.pid }}</td>
+        <td rowspan="5">{{ wtf.quick_form(bform) }}</td>
+    </tr>
+    <tr>
+        <td>Name</td>
+        <td>{{ product.pname }}</td>
+    </tr>
+    <tr>
+        <td>Brand</td>
+        <td>{{ product.bname }}</td>
+    </tr>
+    <tr>
+        <td>Category</td>
+        <td>{{ product.pricatename }} {{ product.subcatename }}</td>
+    </tr>
+    <tr>
+        <td>Produce date</td>
+        <td>{{ product.pdate }}</td>
+    </tr>
+</table>
+<hr>
+<h3>Comments:</h3>
+{% for c in comments %}
+<h4> {{ c.content }} </h4>
+<h5> Post by: <a href="{{ url_for('profile', cname=c.cname) }}">{{ c.cname }}</a> on {{ c.postdate }}</h5>
+{% endfor %}
+<hr>
+{% endif %}
+
+
+<div>
+    {{ wtf.quick_form(cform) }}
 </div>
-<div class="row">
-    <div class="col-md-4">
-        {{ wtf.quick_form(cform) }}
-    </div>
-</div>
+
 {% endblock %}

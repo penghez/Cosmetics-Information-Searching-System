@@ -1,7 +1,5 @@
 from app import login, app, engine
-from flask_login import UserMixin
 from config import Config
-from sqlalchemy.ext.declarative import declarative_base
 
 
 class Customer(object):
@@ -46,9 +44,9 @@ def search_by_keywords(conn, keyword, brand, cate):
     sql_text = '''
         SELECT * 
         FROM products P, brands B, categories C
-        WHERE P.bid = B.bid and C.cateid = P.cateid and P.pname LIKE '%%%%%s%%%%' and
-            B.bname LIKE '%%%%%s%%%%' and C.subcatename LIKE '%%%%%s%%%%'
-    ''' % (keyword, brand, cate)
+        WHERE P.bid = B.bid and C.cateid = P.cateid and lower(P.pname) LIKE '%%%%%s%%%%' and
+              lower(B.bname) LIKE '%%%%%s%%%%' and lower(C.subcatename) LIKE '%%%%%s%%%%'
+    ''' % (keyword.lower(), brand.lower(), cate.lower())
     cursor = conn.execute(sql_text)
     fetch = cursor.fetchall()
     cursor.close()
@@ -163,6 +161,16 @@ def get_sorted_result(conn, keyword, brand, cate, start_date, end_date, min_pric
     fetch = cursor.fetchall()
     cursor.close()
     return fetch
+
+
+def update_password(conn, password, cid):
+    sql_text = '''
+        UPDATE customers 
+        SET password=%s 
+        WHERE cid=%s
+    ''' % (password, cid)
+    cursor = conn.execute(sql_text)
+    cursor.close()
 
 
 def get_brands_cates_list(attr, table, conn=engine):

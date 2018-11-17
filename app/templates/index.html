@@ -5,14 +5,15 @@
     {% if current_user.is_anonymous %}
     <h1>This is the cosmestics searching system!</h1>
     {% else %}
-    <h1>Hi, {{ current_user.cname }}! Welcome to the searching system!</h1>
+    <h1>Hi, {{ current_user.cname }}!</h1> 
+    <h1>Welcome to the searching system!</h1>
     {% endif %}
     <br>
-	
-	<div class="row">
-        <div class="col-md-4">
+    
+
+        <div>
             {{ wtf.quick_form(form) }}
         </div>
-    </div>
+
 
 {% endblock %}

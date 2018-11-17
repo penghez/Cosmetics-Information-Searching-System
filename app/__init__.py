@@ -8,7 +8,6 @@ from sqlalchemy import create_engine
 
 app = Flask(__name__)
 app.config.from_object(Config)
-# db = SQLAlchemy(app)
 login = LoginManager(app)
 bootstrap = Bootstrap(app)
 engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)

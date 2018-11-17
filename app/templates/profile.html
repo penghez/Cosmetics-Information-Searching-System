@@ -1,15 +1,32 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>Name: {{ user.cname }}</h1>
-    <hr>
-    <h1>Gender: {{ user.gender }}</h1>
-    <hr>
-    <h1>Birthdate: {{ user.birthday }}</h1>
-    <hr>
+<table class="table h3">
+    <tr>
+        <td>ID</td>
+        <td colspan="2">{{ user.cid }}</td>
+    </tr>
+    <tr>
+        <td>Name</td>
+        <td colspan="2">{{ user.cname }}</td>
+    </tr>
+    <tr>
+        <td>Gender</td>
+        <td colspan="2">{{ user.gender }}</td>
+    </tr>
+    <tr>
+        <td>Birthday</td>
+        <td colspan="2">{{ user.birthday }}</td>
+    </tr>
     {% if current_user.cname == user.cname %}
-        <h1>Password: {{ user.password }}</h1>
-        <hr>
+    <tr>
+        <form method="GET">
+            <td>Password</td>
+            <td><input type="text" class="form-control" name="password" id="password" placeholder={{ user.password }}></td>
+            <td><button type="submit" class="btn btn-danger">Update</button></td>
+        </form>
+    </tr>
     {% endif %}
-    <h1>Back to <a href = {{ url_for('index') }}>Index</a></h1>
+</table>
+
 {% endblock %}

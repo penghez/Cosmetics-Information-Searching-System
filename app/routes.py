@@ -25,6 +25,7 @@ def teardown_request(exception):
         pass
 
 
+@app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     form = SearchForm()
@@ -47,7 +48,7 @@ def login():
         customer = Customer(customer)
         login_user(customer, remember=form.remember_me.data)
         return redirect(url_for('index'))
-    return render_template('login.html', title='Sign In', form=form)
+    return render_template('login.html', title='Sign in', form=form)
 
 
 @app.route('/logout')
@@ -69,6 +70,9 @@ def register():
 @app.route('/profile/<cname>')
 def profile(cname):
     user = Customer(find_first_query(g.conn, cname, "cname", "customers"))
+    new_password = request.args.get('password', "", type=str)
+    if new_password != "":
+        update_password(g.conn, new_password, user.cid)
     return render_template('profile.html', title='Profile', user=user)
 
 
@@ -76,26 +80,50 @@ def profile(cname):
 def search(keywords):
     form = FilterForm()
     keyword, brand, cate = keywords.split('#')
-    products = search_by_keywords(g.conn, keyword, brand, cate)
-    if not products:
-        flash("Can not find such product in the database.")
-        return redirect(url_for('index'))
+    cur_page = request.args.get('page', 1, type=int)
+    filters = request.args.get('filters', '#', type=str)
+    if filters == "#":
+        products = search_by_keywords(g.conn, keyword, brand, cate)
+    else:
+        start_date, end_date, min_price, max_price, order = filters.split('#')
+        start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+        end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+        products = get_sorted_result(g.conn, keyword, brand, cate, start_date, end_date, min_price, max_price, order)
 
     if form.validate_on_submit():
         start_date, end_date = form.start_date.data, form.end_date.data
         min_price, max_price = form.min_price.data, form.max_price.data
         order = form.order.data
         if not start_date:
-            start_date = datetime.datetime.strptime('1000/01/01', '%Y/%m/%d') 
+            start_date = datetime.date(1000, 1, 1)
         if not end_date:
             end_date = datetime.date.today()
         if not min_price:
             min_price = 0
         if not max_price:
             max_price = 99999
+
         products = get_sorted_result(g.conn, keyword, brand, cate, start_date, end_date, min_price, max_price, order)
-        return render_template('search.html', title='Search', products=products, form=form)
-    return render_template('search.html', title='Search', products=products, form=form)
+        cur_page = 1
+        filters = str(start_date) + '#' + str(end_date) + '#' + str(min_price) + '#' + str(max_price) + '#' + order
+
+    if not products:
+        flash("Can not find such product in the database.")
+        return redirect(url_for('search', keywords="##"))
+    num = len(products)
+    pages = int((num + 0.1) // Config.ITEM_PER_PAGE)
+
+    if cur_page < pages:
+        next_url = url_for('search', keywords=keywords, filters=filters, page=cur_page+1)
+    else:
+        next_url = None
+    if cur_page > 1:
+        prev_url = url_for('search', keywords=keywords, filters=filters, page=cur_page-1)
+    else:
+        prev_url = None
+    products = products[(cur_page - 1) * Config.ITEM_PER_PAGE : cur_page * Config.ITEM_PER_PAGE]
+    return render_template('search.html', title='Search', products=products, form=form, num=num, \
+                           next_url=next_url, prev_url=prev_url)
 
 
 @app.route('/product/<pid>', methods=['POST', 'GET'])

@@ -58,7 +58,7 @@ class FilterForm(FlaskForm):
                                                 ('pdate DESC', 'Date High to Low'), ('pdate ASC', 'Date Low to High')])
     submit = SubmitField('Apply')
 
-    def validate_maxprice(self, max_price):
+    def validate_max_price(self, max_price):
         if self.min_price.data and self.min_price.data > max_price.data:
             raise ValidationError('Max price should not smaller than min price.')
 
