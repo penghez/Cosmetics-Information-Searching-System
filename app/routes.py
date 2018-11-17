@@ -61,7 +61,8 @@ def logout():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        add_new_customer(g.conn, form.cname.data, form.gender.data, form.birthday.data, form.password.data)
+        add_new_customer(g.conn, form.cname.data, form.gender.data,\
+                         form.birthday.data, form.password.data)
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
@@ -73,7 +74,8 @@ def profile(cname):
     new_password = request.args.get('password', "", type=str)
     if new_password != "":
         update_password(g.conn, new_password, user.cid)
-    return render_template('profile.html', title='Profile', user=user)
+    comments = find_all_personal_comments(g.conn, user.cid)
+    return render_template('profile.html', title='Profile', user=user, comments=comments)
 
 
 @app.route('/search/<keywords>', methods=['POST', 'GET'])
@@ -132,27 +134,38 @@ def product(pid):
     comments = get_all_comments(g.conn, pid)
     bform = AddToBagForm()
     cform = PostCommentForm()
+    
+    if request.method == 'POST' and 'delete' in request.form:
+        print(len(request.form['delete']))
+        delete_comment(g.conn, request.form['delete'])
+        flash("You have deleted your comment.")
+        return redirect(url_for('product', pid=pid))
+
     if bform.validate_on_submit():
-        if not current_user:
+        try:
+            cid = current_user.cid
+        except AttributeError as error:
             flash("You need to log in to add in your bag!")
             return redirect(url_for('product', pid=pid))
-        cid = current_user.cid
         amount = bform.amount.data
         add_to_bag(g.conn, pid, cid, amount)
         flash("You have added the item into your bag!")
         return redirect(url_for('product', pid=pid))
 
     if cform.validate_on_submit():
-        if not current_user:
+        try:
+            cid = current_user.cid
+        except AttributeError as error:
             flash("You need to log in to post your comment!")
             return redirect(url_for('product', pid=pid))
         postdate = datetime.date.today()
-        cid = current_user.cid
         comment = cform.comment.data
         add_new_comment(g.conn, pid, cid, comment, postdate)
         flash("You have added your comment, thanks for sharing!")
         return redirect(url_for('product', pid=pid))
-    return render_template('product.html', title='Product', product=product, comments=comments, bform=bform, cform=cform)
+
+    return render_template('product.html', title='Product', product=product, \
+                            comments=comments, bform=bform, cform=cform)
 
 
 @app.route('/bag/<cid>', methods=['POST', 'GET'])
@@ -161,8 +174,8 @@ def bag(cid):
     bsum = 0
     for i in items:
         bsum += i.price * i.amount
-    if request.method == 'POST':
-        delete_from_bag(g.conn, cid, request.form['deleted'])
+    if request.method == 'POST' and 'delete' in request.form:
+        delete_item(g.conn, 'bags', cid, request.form['delete'])
         flash("You have removed the item no.%s from your bag." % cid)
         return redirect(url_for('bag', cid=cid))
     return render_template('bag.html', title='Bag', sum='%.2f'%bsum, items=items)

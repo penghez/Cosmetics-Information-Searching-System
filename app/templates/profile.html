@@ -27,6 +27,19 @@
         </form>
     </tr>
     {% endif %}
+    <tr>
+        <td>All Comments</td>
+        <td colspan="2">
+            <table class="table table-striped h5">
+                {% for c in comments %}
+                <tr>
+                    <td>{{ c.pid }}</td>
+                    <td>{{ c.content }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
 </table>
 
 {% endblock %}

@@ -117,28 +117,50 @@ def add_to_bag(conn, pid, cid, amount):
     else:
         sql_text = '''
             UPDATE bags 
-            SET amount=%s 
-            WHERE pid=%s and cid=%s
+            SET amount = %s 
+            WHERE pid = %s and cid = %s
         ''' % (fetch.amount+amount, pid, cid)
     cursor = conn.execute(sql_text)
     cursor.close()
 
 
-def delete_from_bag(conn, cid, pid):
+def delete_item(conn, table, cid, pid):
     sql_text = '''
         DELETE 
-        FROM bags
-        WHERE cid=%s and pid=%s 
-    ''' % (cid, pid)
+        FROM %s
+        WHERE cid = %s and pid = %s 
+    ''' % (table, cid, pid)
     cursor = conn.execute(sql_text)
     cursor.close()
+
+
+def delete_comment(conn, commid):
+    sql_text = '''
+        DELETE 
+        FROM communities
+        WHERE commid = %s 
+    ''' % commid
+    cursor = conn.execute(sql_text)
+    cursor.close()
+
+
+def find_all_personal_comments(conn, cid):
+    sql_text = '''
+        SELECT *
+        FROM communities
+        WHERE cid = %s
+    ''' % cid
+    cursor = conn.execute(sql_text)
+    fetch = cursor.fetchall()
+    cursor.close()
+    return fetch
 
 
 def get_the_bag(conn, cid):
     sql_text = '''
         SELECT *
         FROM bags B, products P
-        WHERE B.cid=%s and P.pid=B.pid
+        WHERE B.cid = %s and P.pid = B.pid
     ''' % cid
     cursor = conn.execute(sql_text)
     fetch = cursor.fetchall()
@@ -154,7 +176,7 @@ def get_sorted_result(conn, keyword, brand, cate, start_date, end_date, min_pric
                             B.bname LIKE '%%%%%s%%%%' and C.subcatename LIKE '%%%%%s%%%%')
         SELECT *
         FROM R
-        WHERE R.price>=%s and R.price<=%s and R.pdate>='%s' and R.pdate<='%s'
+        WHERE R.price >= %s and R.price <= %s and R.pdate >= '%s' and R.pdate <= '%s'
         ORDER BY R.%s
     ''' % (keyword, brand, cate, min_price, max_price, start_date, end_date, order)
     cursor = conn.execute(sql_text)

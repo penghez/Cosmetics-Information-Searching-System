@@ -30,13 +30,25 @@
 </table>
 <hr>
 <h3>Comments:</h3>
-{% for c in comments %}
-<h4> {{ c.content }} </h4>
-<h5> Post by: <a href="{{ url_for('profile', cname=c.cname) }}">{{ c.cname }}</a> on {{ c.postdate }}</h5>
-{% endfor %}
-<hr>
+<form method="POST">
+    <table class="table">
+        {% for c in comments %}
+        <tr>
+            <td class="h3" colspan="2"> {{ c.content }} </td>
+        </tr>
+        <tr class="info">
+            <td class="h5"> Posted by <a href="{{ url_for('profile', cname=c.cname) }}">{{ c.cname }}</a> on {{
+                c.postdate }}</td>
+            {% if current_user.cid == c.cid or current_user.cname == "Admin" %}
+            <td><button type="submit" name="delete" value={{ c.commid }} class="btn btn-danger">Delete</button></td>
+            {% else %}
+            <td></td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</form>
 {% endif %}
-
 
 <div>
     {{ wtf.quick_form(cform) }}
