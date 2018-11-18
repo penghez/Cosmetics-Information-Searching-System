@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<h3>Best Sellers</h3>
+{% if dates %}
+<table class="table table-hover table-striped">
+    <thead>
+        <th>Date</th>
+        <th>Number</th>
+    </thead>
+
+    {% for d in dates %}
+    <tr>
+        <td><a href={{ url_for("adbestsellers", date=d.bdate)}}>{{ d.bdate }}</a></td>
+        <td>{{ d.count }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<form method="POST">
+<table class="table table-hover table-striped">
+    <thead>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Delete</th>
+    </thead>
+
+    {% for p in products %}
+    <tr>
+        <td>{{ p.pid }}</td>
+        <td><a href={{ url_for("product", pid=p.pid)}}>{{ p.pname }}</a></td>
+        <td>{{ p.price }}</td>
+        <td><button type="submit" name="delete" value={{ p.pid }} class="btn btn-danger">Delete</button></td>
+    </tr>
+    {% endfor %}
+</table>
+</form>
+{% endif %}
+<a href={{ url_for('add', item="bestseller") }}><button class="btn btn-info">Add a new bestseller</button></a>
+{% endblock %}

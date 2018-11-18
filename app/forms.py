@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, DateField, SelectField, TextAreaField, IntegerField
+from wtforms import *
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Length, NumberRange, Optional
-from app.models import get_brands_cates_list, find_first_query
+from app.models import get_brands_cates_list, find_first_query, find_bestsellers
 from app import engine
 import datetime
 
@@ -65,3 +65,62 @@ class FilterForm(FlaskForm):
     def validate_end_date(self, end_date):
         if self.start_date.data and self.start_date.data > end_date.data:
             raise ValidationError('End date should not smaller than start date.')
+
+
+class AddBrandForm(FlaskForm):
+    bid = IntegerField('Brand ID', validators=[DataRequired()])
+    bname = StringField('Brand Name', validators=[DataRequired()])
+    surplus = StringField('Surplus', default="0")
+    submit = SubmitField('Apply')
+
+    def validate_bid(self, bid):
+        brand = find_first_query(engine, bid.data, "bid", "brands")
+        if brand is not None:
+            raise ValidationError('Please use a different ID.')
+    
+    def validate_bname(self, bname):
+        brand = find_first_query(engine, bname.data, "bname", "brands")
+        if brand is not None:
+            raise ValidationError('Please use a different name.')
+
+
+class AddProductForm(FlaskForm):
+    pid = IntegerField('Product ID', validators=[DataRequired()])
+    pname = StringField('Product Name', validators=[DataRequired()])
+    bid = IntegerField('Brand ID', validators=[DataRequired()])
+    cateid = IntegerField('Category ID', validators=[DataRequired()])
+    pdate = DateField('Produce Date', validators=[DataRequired()])
+    price = FloatField('Price', validators=[DataRequired()])
+    submit = SubmitField('Apply')
+
+    def validate_pid(self, pid):
+        product = find_first_query(engine, pid.data, "pid", "products")
+        if product is not None:
+            raise ValidationError('Please use a different ID.')
+    
+    def validate_pname(self, pname):
+        product = find_first_query(engine, pname.data, "pname", "products")
+        if product is not None:
+            raise ValidationError('Please use a different name.')
+
+    def validate_bid(self, bid):
+        brand = find_first_query(engine, bid.data, "bid", "brands")
+        if brand is None:
+            raise ValidationError('No such company found!')
+
+    def validate_cateid(self, cateid):
+        cate = find_first_query(engine, cateid.data, "cateid", "categories")
+        if cate is not None:
+            raise ValidationError('No such category found!')
+
+
+class AddBestSellerForm(FlaskForm):
+    pid = IntegerField('Product ID', validators=[DataRequired()])
+    bdate = DateField('Bestseller Date', format='%Y/%m/%d', validators=[DataRequired()])
+    submit = SubmitField('Apply')
+
+    def validate_pid(self, pid):
+        bs = find_bestsellers(engine, pid.data, self.bdate.data)
+        if bs is not None:
+            raise ValidationError('It is already in the database!')
+    

@@ -18,24 +18,30 @@
 </form>
 <hr>
 <h5>There are total {{ num }} results:</h5>
+<form method="POST">
 <table class="table table-hover table-striped">
     <thead>
-        <th>Product</th>
-        <th>Brand</th>
-        <th>Category</th>
+        <th>ID</th>
+        <th>Name</th>
         <th>Price</th>
         <th>Produce Date</th>
+        <th>Delete</th>
     </thead>
+    <tr>
+        
+    </tr>
     {% for p in products %}
     <tr>
-        <td><a href={{ url_for('product', pid=p.pid) }}>{{ p.pname }}</a></td>
-        <td width="15%"><a href={{ url_for('search', keywords='#'+p.bname+'#') }}>{{ p.bname }}</a></td>
-        <td width="15%"><a href={{ url_for('search', keywords='##'+p.subcatename.split('/')[0]) }}>{{ p.subcatename }}</a></td>
+        <td>{{ p.pid }}</td>
+        <td><a href={{ url_for('adinfoproduct', pid=p.pid) }}>{{ p.pname }}</td>
         <td width="10%">{{ p.price }}</td>
-        <td width="13%">{{ p.pdate }}</td>
+        <td width="15%">{{ p.pdate }}</td>
+        <td width="5%"><button type="submit" name="delete" value={{ p.pid }} class="btn btn-danger">Delete</button></td>
     </tr>
     {% endfor %}
 </table>
+</form>
+<a href={{ url_for('add', item="product") }}><button class="btn btn-info">Add a new product</button></a>
 <div style="text-align:center">
     <ul class="pagination">
         {% if prev_url %}
@@ -52,4 +58,5 @@
     </ul>
 </div>
 {% endif %}
+
 {% endblock %}

@@ -41,5 +41,14 @@
         </td>
     </tr>
 </table>
-
+{% if current_user.cname == "Admin" %}
+    <table>
+        <tr>
+            <td><a href={{ url_for("adcustomers") }}><button class="btn btn-info">Customers</button></a>&nbsp;</td>
+            <td><a href={{ url_for("adbrands") }}><button class="btn btn-info">Brands</button></a>&nbsp;</td>
+            <td><a href={{ url_for("adproducts") }}><button class="btn btn-info">Products</button></a>&nbsp;</td>
+            <td><a href={{ url_for("adbestsellers") }}><button class="btn btn-info">Best Sellers</button></a></td>
+        </tr>
+    </table>
+{% endif %}
 {% endblock %}

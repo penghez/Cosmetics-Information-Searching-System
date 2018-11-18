@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+<h3>Product information:</h3>
+{% if product %}
+<form method="POST">
+<table class="table table-bordered h3">
+    <tr>
+        <td>ID</td>
+        <td>{{ product.pid }}</td>
+    </tr>
+    <tr>
+        <td>Name</td>
+        <td><input type="text" class="form-control" name="pname" id="pname" value="{{ product.pname }}"></td>
+    </tr>
+    <tr>
+        <td>Brand</td>
+        <td><input type="text" class="form-control" name="bname" id="bname" value="{{ product.bname }}"></td>
+    </tr>
+    <tr>
+        <td>Produce date</td>
+        <td><input type="text" class="form-control" name="pdate" id="pdate" value="{{ product.pdate }}"></td>
+    </tr>
+</table>
+<td><button type="submit" class="btn btn-danger">Update</button></td>
+</form>
+<hr>
+<h3>Comments:</h3>
+<form method="POST">
+    <table class="table">
+        {% for c in comments %}
+        <tr>
+            <td class="h3" colspan="2"> {{ c.content }} </td>
+        </tr>
+        <tr class="info">
+            <td class="h5"> Posted by <a href="{{ url_for('profile', cname=c.cname) }}">{{ c.cname }}</a> on {{ c.postdate }}</td>
+            <td><button type="submit" name="delete" value={{ c.commid }} class="btn btn-danger">Delete</button></td>
+        </tr>
+        {% endfor %}
+    </table>
+</form>
+{% endif %}
+
+{% endblock %}

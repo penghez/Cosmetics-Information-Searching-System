@@ -134,12 +134,12 @@ def delete_item(conn, table, cid, pid):
     cursor.close()
 
 
-def delete_comment(conn, commid):
+def delete_query(conn, table, attr, commid):
     sql_text = '''
         DELETE 
-        FROM communities
-        WHERE commid = %s 
-    ''' % commid
+        FROM %s
+        WHERE %s = %s 
+    ''' % (table, attr, commid)
     cursor = conn.execute(sql_text)
     cursor.close()
 
@@ -168,17 +168,27 @@ def get_the_bag(conn, cid):
     return fetch
 
 
+def delete_bestseller(conn, pid, bdate):
+    sql_text = '''
+        DELETE 
+        FROM bestsellers
+        WHERE pid = %s and bdate = '%s' 
+    ''' % (pid, bdate)
+    cursor = conn.execute(sql_text)
+    cursor.close()
+
+
 def get_sorted_result(conn, keyword, brand, cate, start_date, end_date, min_price, max_price, order):
     sql_text = '''
         WITH R AS (SELECT * 
-                        FROM products P, brands B, categories C
-                        WHERE P.bid = B.bid and C.cateid = P.cateid and P.pname LIKE '%%%%%s%%%%' and
-                            B.bname LIKE '%%%%%s%%%%' and C.subcatename LIKE '%%%%%s%%%%')
+                FROM products P, brands B, categories C
+                WHERE P.bid = B.bid and C.cateid = P.cateid and lower(P.pname) LIKE '%%%%%s%%%%' and
+                    lower(B.bname) LIKE '%%%%%s%%%%' and lower(C.subcatename) LIKE '%%%%%s%%%%')
         SELECT *
         FROM R
         WHERE R.price >= %s and R.price <= %s and R.pdate >= '%s' and R.pdate <= '%s'
         ORDER BY R.%s
-    ''' % (keyword, brand, cate, min_price, max_price, start_date, end_date, order)
+    ''' % (keyword.lower(), brand.lower(), cate.lower(), min_price, max_price, start_date, end_date, order)
     cursor = conn.execute(sql_text)
     fetch = cursor.fetchall()
     cursor.close()
@@ -188,9 +198,126 @@ def get_sorted_result(conn, keyword, brand, cate, start_date, end_date, min_pric
 def update_password(conn, password, cid):
     sql_text = '''
         UPDATE customers 
-        SET password=%s 
-        WHERE cid=%s
+        SET password = %s 
+        WHERE cid = %s
     ''' % (password, cid)
+    cursor = conn.execute(sql_text)
+    cursor.close()
+
+
+def update_product_info(conn, pid, pname, bid, pdate):
+    sql_text = '''
+        UPDATE products 
+        SET pname = '%s', bid = %s, pdate = '%s'  
+        WHERE pid = %s
+    ''' % (pname, bid, pdate, pid)
+    cursor = conn.execute(sql_text)
+    cursor.close()
+
+
+def get_all_brands(conn, order):
+    sql_text = '''
+        WITH T AS (SELECT B.bid, B.bname, B.surplus, COUNT(*) as count
+                   FROM brands B, products P
+                   WHERE B.bid = P.bid
+                   GROUP BY B.bid, B.bname, B.surplus)
+        SELECT B.bid, B.bname, B.surplus, T.count
+        FROM brands B left outer join T
+             ON B.bid = T.bid
+    '''
+    if order:
+        sql_text = sql_text + ' ' + order
+    cursor = conn.execute(sql_text)
+    fetch = cursor.fetchall()
+    cursor.close()
+    return fetch
+
+
+def get_all_customers(conn, order):
+    sql_text = '''
+        WITH M AS (SELECT B.cid, B.amount * P.price as value
+                   FROM bags B, products P
+                   WHERE B.pid = P.pid)
+        SELECT T.cid, T.cname, T.birthday, SUM(M.value) as val
+        FROM (SELECT C.cid, C.cname, C.birthday
+              FROM customers C left outer join bags B
+              ON B.cid = C.cid) T left outer join M
+              ON T.cid = M.cid 
+        GROUP BY T.cid, T.cname, T.birthday
+    '''
+    if order:
+        sql_text = sql_text + ' ' + order
+    cursor = conn.execute(sql_text)
+    fetch = cursor.fetchall()
+    cursor.close()
+    return fetch
+
+
+def add_new_brand(conn, bid, bname, surplus):
+    sql_text = '''
+        INSERT INTO brands 
+        (bid, bname, surplus) 
+        VALUES 
+        (%s, '%s', '%s')
+    ''' % (bid, bname, surplus)
+    cursor = conn.execute(sql_text)
+    cursor.close()
+
+
+def get_bestsellers_date(conn):
+    sql_text = '''
+        SELECT bdate, COUNT(*) as count
+        FROM bestsellers
+        GROUP BY bdate
+        ORDER BY bdate DESC
+    '''
+    cursor = conn.execute(sql_text)
+    fetch = cursor.fetchall()
+    cursor.close()
+    return fetch
+
+
+def get_specify_bestsellers(conn, date):
+    sql_text = '''
+        SELECT *
+        FROM bestsellers B, products P
+        WHERE B.pid = P.pid and B.bdate = '%s'
+    ''' % date
+    cursor = conn.execute(sql_text)
+    fetch = cursor.fetchall()
+    cursor.close()
+    return fetch
+
+def add_new_product(conn, pid, pname, bid, cateid, price, pdate):
+    sql_text = '''
+        INSERT INTO products 
+        (pid, pname, bid, cateid, price, pdate) 
+        VALUES 
+        (%s, '%s', %s, %s, %s, '%s')
+    ''' % (pid, pname, bid, cateid, price, pdate) 
+    cursor = conn.execute(sql_text)
+    cursor.close()
+
+
+def find_bestsellers(conn, pid, bdate):
+    sql_text = '''
+        SELECT *
+        FROM bestsellers
+        WHERE pid = %s and bdate = '%s'
+    ''' % (pid, bdate)
+    cursor = conn.execute(sql_text)
+    fetch = cursor.first()
+    cursor.close()
+    return fetch
+
+
+def add_new_bestseller(conn, pid, bdate):
+    sql_text = '''
+        INSERT INTO bestsellers
+        (pid, bdate) 
+        VALUES 
+        (%s, '%s')
+    ''' % (pid, bdate)
     cursor = conn.execute(sql_text)
     cursor.close()
 

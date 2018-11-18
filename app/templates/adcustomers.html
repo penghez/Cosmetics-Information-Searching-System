@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<h3>Customers Information</h3>
+<h5>There are total {{ num }} customers:</h5>
+<form method="POST">
+    <table class="table table-hover table-striped">
+        <thead>
+            {% if sort == "0" %}
+            <th><a href={{ url_for('adcustomers', order="ORDER BY T.cid ASC#1") }}>ID</a></th>
+            {% else %}
+            <th><a href={{ url_for('adcustomers', order="ORDER BY T.cid DESC#0") }}>ID</a></th>
+            {% endif %}
+            <th>Name</th>
+            <th>Birthday</th>
+            {% if sort == "0" %}
+            <th><a href={{ url_for('adcustomers', order="ORDER BY val ASC#1") }}>bag value</a></th>
+            {% else %}
+            <th><a href={{ url_for('adcustomers', order="ORDER BY val DESC#0") }}>bag value</a></th>
+            {% endif %}
+        </thead>
+       
+        {% for c in customers %}
+        <tr>
+            <td width="5%">{{ c.cid }}</td>
+            <td><a href={{ url_for('profile', cname=c.cname) }}>{{ c.cname }}</a></td>
+            <td width="15%">{{ c.birthday }}</td>
+            <td width="20%">{{ c.val }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</form>
+
+{% endblock %}
