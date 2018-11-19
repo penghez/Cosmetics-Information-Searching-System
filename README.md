@@ -107,7 +107,7 @@ You can see from the page is divided into two parts: the information part and th
 
 In the information part, you can see all the information about the product, including: ID, name, brand, category and its produce date. Also, you can choose how many products you can add into your bag. If you have already added it in your add, new amount will add together with the old ones:
 
-![image-20181119144151073](/Users/phzhang/Library/Application Support/typora-user-images/image-20181119144151073.png)
+![image-20181119144151073](./repo/image-20181119144151073.png)
 
 On the other hand, you can add your comment in the page, and it will be displayed in the end of the page. You can also delete your own comment by yourself, but you cannot delete others' comments (only if you are Admin). 
 
