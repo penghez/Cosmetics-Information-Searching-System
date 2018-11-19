@@ -23,7 +23,7 @@
 
 #### The url of the web application
 
-> http:// :8111/
+> http://35.196.3.71:8111/
 
 
 
