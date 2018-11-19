@@ -13,7 +13,7 @@
         <tbody>
           {% for i in items %}
             <tr>
-                <td>{{ i.pname }}</td>
+                <td><a href={{ url_for('product', pid=i.pid) }}>{{ i.pname }}</a></td>
                 <td>{{ i.price }}</td>
                 <td>{{ i.amount }}</td>
                 <td><button type="submit" name="delete" value={{ i.pid }} class="btn btn-danger">Delete</button></td>
