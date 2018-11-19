@@ -11,7 +11,7 @@
 + The account of the PostgreSQL is `pz2244`;
 + The whole project is based on __Python3__;
 + Enter in the root directory of the project, run `sudo pip3 install -r requirements.txt` to install all the packages needed for the project;
-+ Run `flask run --host 0.0.0.0/0 --port 8111` to start the service.
++ Run `flask run --host 0.0.0.0 --port 8111` to start the service.
 
 
 
@@ -77,31 +77,31 @@ __NONE__
 
 
 
-####Description of web pages
+#### Description of web pages
 
 1. __The search and filter page__
 
-![image-20181119123615710](/Users/phzhang/Library/Application Support/typora-user-images/image-20181119123615710.png)
+![image-20181119123615710](./repo/image-20181119123615710.png)
 
 You can see from the web page, you can enter the keyword, and choose brand/category to filter certain products. After tapping `Search button` you will get your results:
 
-![image-20181119123759698](/Users/phzhang/Library/Application Support/typora-user-images/image-20181119123759698.png)
+![image-20181119123759698](./repo/image-20181119123759698.png)
 
 In the result you can choose all what you want and enter the detail page (All the text blue represent it is a hyper link). Also you can see there is a filter on the top of the page, you can type in your specific constraints (eg. start date, end date, min price, max price, order) to filter your wished result:
 
-![image-20181119124305261](/Users/phzhang/Library/Application Support/typora-user-images/image-20181119124305261.png)
+![image-20181119124305261](./repo/image-20181119124305261.png)
 
 All these operations are implemented by combing the three tables (`products`, `brands`, `categories`) together to get all information of products and then use `where` to filter and use `order by` to order all the products. And we also use `count` to get the total number of the products. If you are an `admin`, you will also have the authority to modify and delete product:
 
-![image-20181119125216613](/Users/phzhang/Library/Application Support/typora-user-images/image-20181119125216613.png)
+![image-20181119125216613](./repo/image-20181119125216613.png)
 
 
 
 2. __The detail page of product__
 
-![image-20181119125604425](/Users/phzhang/Library/Application Support/typora-user-images/image-20181119125604425.png)
+![image-20181119125604425](./repo/image-20181119125604425.png)
 
-![image-20181119125618736](/Users/phzhang/Library/Application Support/typora-user-images/image-20181119125618736.png)
+![image-20181119125618736](./repo/image-20181119125618736.png)
 
 You can see from the page is divided into two parts: the information part and the comments part.
 
