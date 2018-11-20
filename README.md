@@ -113,5 +113,5 @@ On the other hand, you can add your comment in the page, and it will be displaye
 
 The add-comment operation is based on `insert` and also detect whether it is a validate comment, also delete-comment is based on `delete`.
 
-The add-to-bag operation is basically based on `insert` and `update`, we first detect whether there is a same (`pid`, `cid`) in the `bags` table, and then use `insert` and `update` to update your bag. Moreover, we get the total price by joining `bags` and `products` and sum the total price.
+The add-to-bag operation is basically based on `insert` and `update`, we first detect whether there is a same (`pid`, `cid`) in the `bags` table, and then use `insert` and `update` to update your bag. Moreover, we get the total price by joining `bags` and `products`, find all the rows with a same `cid`, then sum to get the total price.
 

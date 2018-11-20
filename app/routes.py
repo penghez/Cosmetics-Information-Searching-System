@@ -174,9 +174,8 @@ def product(pid):
 @app.route('/bag/<cid>', methods=['POST', 'GET'])
 def bag(cid):
     items = get_the_bag(g.conn, cid)
-    bsum = 0
-    for i in items:
-        bsum += i.price * i.amount
+    bsum = get_bag_sum(g.conn, cid).sum
+
     if request.method == 'POST' and 'delete' in request.form:
         delete_item(g.conn, 'bags', cid, request.form['delete'])
         flash("You have removed the item no.%s from your bag." % cid)

@@ -253,6 +253,18 @@ def get_all_customers(conn, order):
     return fetch
 
 
+def get_bag_sum(conn, cid):
+    sql_text = '''
+        SELECT SUM(B.amount * P.price) as sum
+        FROM bags B, products P
+        WHERE B.cid = %s and P.pid = B.pid
+    ''' % cid
+    cursor = conn.execute(sql_text)
+    fetch = cursor.first()
+    cursor.close()
+    return fetch
+
+
 def add_new_brand(conn, bid, bname, surplus):
     sql_text = '''
         INSERT INTO brands 
@@ -287,6 +299,7 @@ def get_specify_bestsellers(conn, date):
     fetch = cursor.fetchall()
     cursor.close()
     return fetch
+
 
 def add_new_product(conn, pid, pname, bid, cateid, price, pdate):
     sql_text = '''
