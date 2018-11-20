@@ -10,7 +10,8 @@
 
 + The account of the PostgreSQL is `pz2244`;
 + The whole project is based on __Python3__;
-+ Enter in the root directory of the project, run `sudo pip3 install -r requirements.txt` to install all the packages needed for the project;
++ Enter in the root directory of the project, run `source venv/py3_flask/bin/activate` to activate virtual environment;
++ Run `sudo pip3 install -r requirements.txt` to install all the packages needed for the project;
 + Run `flask run --host 0.0.0.0 --port 8111` to start the service.
 
 
