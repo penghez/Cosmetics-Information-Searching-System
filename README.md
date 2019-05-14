@@ -24,7 +24,7 @@
 
 #### The url of the web application
 
-> http://35.196.3.71:8111/
+> http://35.196.3.71:8111/ (deprecated, update on 19/05/13)
 
 
 
